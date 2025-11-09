@@ -68,25 +68,48 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ForwardEmail sends different formats, let's handle common ones
-    // Check what fields are present
+    // ForwardEmail sends a specific format based on their docs
     console.log('📧 Parsed email data:', JSON.stringify(body, null, 2));
 
-    // Extract email fields - adjust based on what ForwardEmail actually sends
-    const from = body.from || body.envelope?.from || body.sender || 'unknown@example.com';
-    const to = body.to || body.envelope?.to || body.recipient || 'alias@fisica.cat';
+    // Extract email fields from ForwardEmail's format
+    // ForwardEmail sends: { from: { value: [{ address, name }], text }, recipients: [...], text, html, ... }
+    let fromEmail = 'unknown@example.com';
+    
+    if (body.from?.value && Array.isArray(body.from.value) && body.from.value.length > 0) {
+      fromEmail = body.from.value[0].address || fromEmail;
+    } else if (body.from?.text) {
+      fromEmail = body.from.text;
+    } else if (typeof body.from === 'string') {
+      fromEmail = body.from;
+    } else if (body.session?.sender) {
+      fromEmail = body.session.sender;
+    }
+
+    // Get recipient from recipients array or session
+    let toEmail = 'alias@fisica.cat';
+    if (body.recipients && Array.isArray(body.recipients) && body.recipients.length > 0) {
+      toEmail = body.recipients[0];
+    } else if (body.session?.recipient) {
+      toEmail = body.session.recipient;
+    } else if (body.to) {
+      toEmail = typeof body.to === 'string' ? body.to : body.to.text || body.to.value?.[0]?.address;
+    }
+
     const subject = body.subject || '(No Subject)';
-    const text = body.text || body.body || body.plain || '';
-    const html = body.html || body.html_body || '';
+    const text = body.text || body.textAsHtml || '';
+    const html = body.html || body.textAsHtml || '';
     const attachments = body.attachments || [];
 
+    // Log extracted fields for debugging
+    console.log('📋 Extracted fields:', { fromEmail, toEmail, subject, hasText: !!text, hasHtml: !!html });
+
     // Validate required fields
-    if (!from || !to) {
-      console.error('Missing required fields:', { from, to });
+    if (!fromEmail || !toEmail) {
+      console.error('Missing required fields:', { fromEmail, toEmail });
       return NextResponse.json(
         { 
           error: 'Missing required fields: from or to',
-          received: { from, to, subject },
+          received: { fromEmail, toEmail, subject },
           hint: 'Check ForwardEmail webhook documentation for correct field names'
         },
         { status: 400 }
@@ -97,8 +120,8 @@ export async function POST(request: NextRequest) {
     const { data, error } = await supabase
       .from('emails')
       .insert({
-        from_email: from,
-        to_email: to,
+        from_email: fromEmail,
+        to_email: toEmail,
         subject: subject,
         body: text,
         html_body: html,
