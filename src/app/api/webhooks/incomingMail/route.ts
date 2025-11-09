@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
+// Ensure this route can handle POST requests
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 // Use service role for webhooks (no user auth required)
 const getSupabaseServiceClient = () => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -16,6 +20,7 @@ const getSupabaseServiceClient = () => {
 
 // GET endpoint to monitor recent webhook deliveries
 export async function GET(request: NextRequest) {
+  console.log('📊 GET request to webhook endpoint');
   try {
     const supabase = getSupabaseServiceClient();
     const { searchParams } = new URL(request.url);
