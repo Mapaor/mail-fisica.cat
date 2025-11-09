@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Inbox, Send, Mail } from 'lucide-react';
+import { Inbox, Send, Mail, Activity } from 'lucide-react';
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -11,6 +11,7 @@ export default function Sidebar() {
     { href: '/dashboard/inbox', icon: Inbox, label: 'Inbox' },
     { href: '/dashboard/sent', icon: Send, label: 'Sent' },
     { href: '/dashboard/compose', icon: Mail, label: 'Compose' },
+    { href: '/dashboard/monitor', icon: Activity, label: 'Webhook Monitor' },
   ];
 
   return (
