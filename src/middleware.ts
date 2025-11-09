@@ -2,6 +2,18 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  
+  // Log all webhook requests for debugging
+  if (pathname.startsWith('/api/webhooks')) {
+    console.log('🔔 Middleware: Webhook request received', {
+      path: pathname,
+      method: request.method,
+      headers: Object.fromEntries(request.headers.entries()),
+      timestamp: new Date().toISOString(),
+    });
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -37,9 +49,9 @@ export async function middleware(request: NextRequest) {
   // Protected routes
   if (
     !user &&
-    !request.nextUrl.pathname.startsWith('/sign-in') &&
-    !request.nextUrl.pathname.startsWith('/sign-up') &&
-    !request.nextUrl.pathname.startsWith('/api/webhooks') // Allow webhooks without auth
+    !pathname.startsWith('/sign-in') &&
+    !pathname.startsWith('/sign-up') &&
+    !pathname.startsWith('/api/webhooks') // Allow webhooks without auth
   ) {
     const url = request.nextUrl.clone();
     url.pathname = '/sign-in';
@@ -49,12 +61,17 @@ export async function middleware(request: NextRequest) {
   // If user is logged in and tries to access sign-in/sign-up, redirect to dashboard
   if (
     user &&
-    (request.nextUrl.pathname.startsWith('/sign-in') ||
-      request.nextUrl.pathname.startsWith('/sign-up'))
+    (pathname.startsWith('/sign-in') ||
+      pathname.startsWith('/sign-up'))
   ) {
     const url = request.nextUrl.clone();
     url.pathname = '/dashboard/inbox';
     return NextResponse.redirect(url);
+  }
+
+  // Log when webhook passes through middleware
+  if (pathname.startsWith('/api/webhooks')) {
+    console.log('✅ Middleware: Webhook allowed to pass through');
   }
 
   return supabaseResponse;

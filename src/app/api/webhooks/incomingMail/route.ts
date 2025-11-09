@@ -63,25 +63,57 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('WEBHOOK HANDLER STARTED');
     const supabase = getSupabaseServiceClient();
     
     // Log the raw request for debugging
     const rawBody = await request.text();
     console.log('📨 Webhook received:', {
+      url: request.url,
+      method: request.method,
       headers: Object.fromEntries(request.headers.entries()),
-      body: rawBody.substring(0, 500), // Log first 500 chars
+      bodyLength: rawBody.length,
+      bodyPreview: rawBody.substring(0, 500), // Log first 500 chars
     });
 
-    // Parse the body
+    // Parse the body - accept both JSON and form data
     let body;
-    try {
-      body = JSON.parse(rawBody);
-    } catch (e) {
-      console.error('Failed to parse JSON:', e);
-      return NextResponse.json(
-        { error: 'Invalid JSON in request body' },
-        { status: 400 }
-      );
+    const contentType = request.headers.get('content-type') || '';
+    
+    if (contentType.includes('application/json')) {
+      try {
+        body = JSON.parse(rawBody);
+        console.log('✅ Parsed as JSON');
+      } catch (e) {
+        console.error('❌ Failed to parse JSON:', e);
+        return NextResponse.json(
+          { error: 'Invalid JSON in request body', raw: rawBody.substring(0, 200) },
+          { status: 400 }
+        );
+      }
+    } else if (contentType.includes('application/x-www-form-urlencoded') || contentType.includes('multipart/form-data')) {
+      // Parse form data
+      console.log('📝 Parsing as form data');
+      const formData = new URLSearchParams(rawBody);
+      body = Object.fromEntries(formData.entries());
+      console.log('✅ Parsed as form data');
+    } else {
+      // Try JSON anyway
+      try {
+        body = JSON.parse(rawBody);
+        console.log('✅ Parsed as JSON (no content-type header)');
+      } catch {
+        console.error('❌ Unknown content type and not valid JSON:', contentType);
+        return NextResponse.json(
+          { 
+            error: 'Unsupported content type',
+            contentType,
+            hint: 'Send as application/json or application/x-www-form-urlencoded',
+            rawBody: rawBody.substring(0, 200)
+          },
+          { status: 400 }
+        );
+      }
     }
 
     // ForwardEmail sends a specific format based on their docs
