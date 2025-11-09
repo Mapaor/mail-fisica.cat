@@ -8,11 +8,22 @@ export async function GET(request: NextRequest) {
     // Get authenticated user
     const {
       data: { user },
+      error: authError
     } = await supabase.auth.getUser();
+
+    if (authError) {
+      console.error('Auth error in emails GET:', authError);
+      return NextResponse.json(
+        { error: 'Authentication error', details: authError.message },
+        { status: 401 }
+      );
+    }
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    console.log('Fetching emails for user:', user.id, user.email);
 
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type'); // 'incoming', 'outgoing', or null for all
@@ -34,12 +45,25 @@ export async function GET(request: NextRequest) {
     const { data, error, count } = await query;
 
     if (error) {
-      console.error('Supabase error:', error);
+      console.error('Supabase error fetching emails:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        user_id: user.id,
+        type: type
+      });
       return NextResponse.json(
-        { error: 'Failed to fetch emails', details: error.message },
+        { 
+          error: 'Failed to fetch emails', 
+          details: error.message,
+          code: error.code 
+        },
         { status: 500 }
       );
     }
+
+    console.log(`Found ${data?.length || 0} emails for user ${user.id}`);
 
     return NextResponse.json(
       { 
