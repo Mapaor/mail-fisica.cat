@@ -86,17 +86,19 @@ CREATE POLICY "Admins can insert any emails"
     )
   );
 
--- Step 6: Function to automatically create profile on user signup
+-- Step 6: Function to create profile when user signs up
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, alias, role)
+  INSERT INTO public.profiles (id, alias, role, forward_to)
   VALUES (
     NEW.id,
     -- Extract alias from email metadata set during signup
     NEW.raw_user_meta_data->>'alias',
     -- Set role from metadata or default to 'user'
-    COALESCE(NEW.raw_user_meta_data->>'role', 'user')
+    COALESCE(NEW.raw_user_meta_data->>'role', 'user'),
+    -- Extract forward_to from metadata (nullable)
+    NEW.raw_user_meta_data->>'forward_to'
   );
   RETURN NEW;
 END;
