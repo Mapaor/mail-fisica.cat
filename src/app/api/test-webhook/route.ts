@@ -1,7 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createClient();
+    
+    // Get authenticated user
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Get user's profile to get their email
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('id', user.id)
+      .single();
+
+    if (!profile) {
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
+    }
+
     const body = await request.json();
     const { to } = body;
 
@@ -10,7 +33,7 @@ export async function POST(request: NextRequest) {
     
     const testEmail = {
       from: 'test@example.com',
-      to: to || 'alias@fisica.cat',
+      to: to || profile.email, // Use authenticated user's email
       subject: 'Test Email from Webhook Tester',
       text: `This is a test email sent at ${new Date().toISOString()}\n\nIf you see this in your inbox, your webhook is working correctly!`,
       html: `<p>This is a test email sent at ${new Date().toISOString()}</p><p>If you see this in your inbox, your webhook is working correctly!</p>`,
