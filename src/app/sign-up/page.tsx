@@ -26,10 +26,12 @@ export default function SignUpPage() {
       try {
         const response = await fetch('/api/registration-status');
         const data = await response.json();
+        console.log("AUTOREGISTRATION STATUS:", data);
         setRegistrationEnabled(data.enabled);
-      } catch {
-        // If we can't check, assume it's enabled (fail open)
-        setRegistrationEnabled(true);
+      } catch (error) {
+        console.error("Error checking registration status:", error);
+        // If we can't check, assume it's disabled (fail closed for security)
+        setRegistrationEnabled(false);
       }
     };
 

@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { isAutoRegisterEnabled } from '@/lib/cloudflare';
 
 export async function GET() {
-  const enabled = isAutoRegisterEnabled();
+  // Check the environment variable server-side
+  const enabled = process.env.ALLOW_AUTO_REGISTER === 'TRUE';
   
   return NextResponse.json({
     enabled,
