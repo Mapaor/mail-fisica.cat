@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Lock, User, AlertCircle, CheckCircle, Forward } from 'lucide-react';
+import { Lock, User, AlertCircle, CheckCircle, Forward, XCircle } from 'lucide-react';
 
 export default function SignUpPage() {
   const [alias, setAlias] = useState('');
@@ -15,8 +15,26 @@ export default function SignUpPage() {
   const [error, setError] = useState<string | null>(null);
   const [checkingAlias, setCheckingAlias] = useState(false);
   const [aliasAvailable, setAliasAvailable] = useState<boolean | null>(null);
+  const [registrationEnabled, setRegistrationEnabled] = useState<boolean | null>(null);
+  const [dnsWarning, setDnsWarning] = useState<string | null>(null);
   const router = useRouter();
   const supabase = createClient();
+
+  // Check if auto-registration is enabled
+  useEffect(() => {
+    const checkRegistrationStatus = async () => {
+      try {
+        const response = await fetch('/api/registration-status');
+        const data = await response.json();
+        setRegistrationEnabled(data.enabled);
+      } catch {
+        // If we can't check, assume it's enabled (fail open)
+        setRegistrationEnabled(true);
+      }
+    };
+
+    checkRegistrationStatus();
+  }, []);
 
   const checkAliasAvailability = async (aliasValue: string) => {
     if (!aliasValue || aliasValue.length < 2) {
@@ -64,6 +82,7 @@ export default function SignUpPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setDnsWarning(null);
 
     // Validation
     if (alias.length < 2) {
@@ -93,6 +112,7 @@ export default function SignUpPage() {
     const email = `${alias}@fisica.cat`;
 
     try {
+      // Step 1: Create Supabase auth user
       const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -106,11 +126,42 @@ export default function SignUpPage() {
 
       if (signUpError) {
         setError(signUpError.message);
-      } else {
-        // Success! Redirect to dashboard
-        router.push('/dashboard/inbox');
-        router.refresh();
+        setLoading(false);
+        return;
       }
+
+      // Step 2: Create DNS record via Cloudflare API
+      try {
+        const dnsResponse = await fetch('/api/dns', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            alias,
+            forwardTo: forwardTo || undefined,
+          }),
+        });
+
+        if (!dnsResponse.ok) {
+          const dnsError = await dnsResponse.json();
+          console.error('DNS creation failed:', dnsError);
+          setDnsWarning(
+            'Account created successfully, but DNS setup failed. Please contact the administrator to complete email setup.'
+          );
+          // Don't block sign-up, continue to dashboard
+        }
+      } catch (dnsError) {
+        console.error('DNS request failed:', dnsError);
+        setDnsWarning(
+          'Account created successfully, but DNS setup failed. Please contact the administrator to complete email setup.'
+        );
+        // Don't block sign-up, continue to dashboard
+      }
+
+      // Success! Redirect to dashboard (even if DNS failed)
+      router.push('/dashboard/inbox');
+      router.refresh();
     } catch {
       setError('An unexpected error occurred');
     } finally {
@@ -127,9 +178,31 @@ export default function SignUpPage() {
           <p className="text-gray-600">Create your email account</p>
         </div>
 
-        {/* Sign Up Form */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <form onSubmit={handleSignUp} className="space-y-6">
+        {/* Check if registration is disabled */}
+        {registrationEnabled === false ? (
+          <div className="bg-white rounded-xl shadow-lg p-8">
+            <div className="text-center space-y-4">
+              <div className="flex justify-center">
+                <XCircle className="w-16 h-16 text-red-500" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">Registration Closed</h2>
+              <p className="text-gray-600">
+                No more users are allowed to sign up. Please contact the administrator.
+              </p>
+              <div className="pt-4">
+                <Link
+                  href="/sign-in"
+                  className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Go to Sign In
+                </Link>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Sign Up Form */
+          <div className="bg-white rounded-xl shadow-lg p-8">
+            <form onSubmit={handleSignUp} className="space-y-6">
             {/* Alias Field */}
             <div>
               <label htmlFor="alias" className="block text-sm font-medium text-gray-700 mb-2">
@@ -238,10 +311,18 @@ export default function SignUpPage() {
               </div>
             )}
 
+            {/* DNS Warning Message */}
+            {dnsWarning && (
+              <div className="flex items-center gap-2 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700">
+                <AlertCircle className="w-5 h-5 shrink-0" />
+                <p className="text-sm">{dnsWarning}</p>
+              </div>
+            )}
+
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading || aliasAvailable === false}
+              disabled={loading || aliasAvailable === false || !registrationEnabled}
               className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {loading ? 'Creating account...' : 'Sign Up'}
@@ -258,6 +339,7 @@ export default function SignUpPage() {
             </p>
           </div>
         </div>
+        )}
       </div>
     </div>
   );
