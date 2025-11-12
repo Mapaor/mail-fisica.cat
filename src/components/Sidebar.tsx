@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Inbox, Send, Mail, Activity, Beaker, LogOut, Settings } from 'lucide-react';
+import { Inbox, Send, Mail, Activity, Beaker, LogOut, Settings, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { Profile } from '@/lib/types/auth';
@@ -57,6 +57,7 @@ export default function Sidebar() {
   const adminNavItems = [
     { href: '/dashboard/monitor', icon: Activity, label: 'Webhook Monitor', adminOnly: true },
     { href: '/dashboard/test', icon: Beaker, label: 'Test Webhook', adminOnly: true },
+    { href: '/dashboard/users', icon: Users, label: 'User Management', adminOnly: true },
   ];
 
   const navItems = isAdmin

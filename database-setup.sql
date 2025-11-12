@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   alias TEXT UNIQUE NOT NULL,
   email TEXT GENERATED ALWAYS AS (alias || '@example.com') STORED,
   forward_to TEXT,
+  dns_record_id TEXT,
   role TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('admin', 'user')),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()

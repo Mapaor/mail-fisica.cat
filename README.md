@@ -10,6 +10,7 @@ A minimalistic, modern email dashboard for sending and receiving mail at a custo
 - Send automated emails from a subdomain (alias@mg.yourdomain.com)
 - Role-based access (admin or user roles)
 - Row Level Security (users only see their own emails)
+- Admin dashboard for user management (delete users and their DNS records)
 - Nice minimalistic UI and refresh buttons for real-time updates.
 
 ### Tech used
