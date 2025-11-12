@@ -41,12 +41,38 @@ export default function SignUpForm() {
       });
 
       if (error) {
-        console.error('Error checking alias:', error, data);
+        console.error('Error checking alias:', error);
+        // RPC reported an error (function missing or SQL error) — treat as unknown
         setAliasAvailable(null);
       } else {
-        setAliasAvailable(!data);
+        // Handle errors vs. empty database (first user signing up)
+        let exists = false;
+
+        if (data === null || data === undefined) {
+          // No result -> alias does not exist
+          exists = false;
+        } else if (typeof data === 'boolean') {
+          exists = data;
+        } else if (Array.isArray(data) && data.length > 0) {
+          // Supabase sometimes wraps scalar returns in an array/object
+          const first = data[0];
+          if (typeof first === 'object' && first !== null) {
+            const v = Object.values(first)[0];
+            exists = Boolean(v);
+          } else {
+            exists = Boolean(first);
+          }
+        } else if (typeof data === 'object') {
+          const v = Object.values(data)[0];
+          exists = Boolean(v);
+        } else {
+          exists = Boolean(data);
+        }
+
+        setAliasAvailable(!exists);
       }
     } catch (err) {
+      // Network/other runtime error
       console.error('Error checking alias:', err);
       setAliasAvailable(null);
     } finally {
