@@ -85,7 +85,6 @@ export default function InboxPage() {
             selectedEmailId={selectedEmail?.id}
           />
         </div>
-
         {/* Email Detail */}
         <div className="flex-1 overflow-hidden">
           {selectedEmail ? (

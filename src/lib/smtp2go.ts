@@ -22,6 +22,7 @@ export async function sendEmailViaSMTP2GO(email: SendEmailRequest) {
     subject: string;
     text_body: string;
     html_body: string;
+    custom_headers?: Array<{ header: string; value: string }>;
   } = {
     api_key: apiKey,
     to: recipients,
@@ -30,6 +31,25 @@ export async function sendEmailViaSMTP2GO(email: SendEmailRequest) {
     text_body: '',
     html_body: '',
   };
+
+  // Add reply headers if provided
+  if (email.in_reply_to || email.references) {
+    payload.custom_headers = [];
+    
+    if (email.in_reply_to) {
+      payload.custom_headers.push({
+        header: 'In-Reply-To',
+        value: email.in_reply_to
+      });
+    }
+    
+    if (email.references) {
+      payload.custom_headers.push({
+        header: 'References',
+        value: email.references
+      });
+    }
+  }
 
   // Handle different scenarios:
   // 1. If both body and html_body provided, use both

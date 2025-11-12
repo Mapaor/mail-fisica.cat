@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     console.log('Profile found:', profile.email);
 
     const body = await request.json();
-    const { to, subject, body: emailBody, html_body } = body;
+    const { to, subject, body: emailBody, html_body, in_reply_to, references } = body;
 
     // Validate required fields - need either body or html_body
     if (!to || !subject || (!emailBody && !html_body)) {
@@ -124,6 +124,8 @@ export async function POST(request: NextRequest) {
       body?: string;
       html_body?: string;
       from: string;
+      in_reply_to?: string;
+      references?: string;
     } = {
       to: recipients,
       subject,
@@ -137,22 +139,52 @@ export async function POST(request: NextRequest) {
       emailPayload.body = emailBody;
     }
 
+    // Include reply headers if this is a reply
+    if (in_reply_to) {
+      emailPayload.in_reply_to = in_reply_to;
+    }
+    if (references) {
+      emailPayload.references = references;
+    }
+
     const smtp2goResponse = await sendEmailViaSMTP2GO(emailPayload);
 
     // Store the sent email in Supabase
+    const emailRecord: {
+      user_id: string;
+      from_email: string;
+      to_email: string;
+      subject: string;
+      body: string;
+      html_body: string;
+      sent_at: string;
+      type: string;
+      is_read: boolean;
+      in_reply_to?: string;
+      references?: string;
+    } = {
+      user_id: user.id,
+      from_email: profile.email,
+      to_email: Array.isArray(recipients) ? recipients.join(', ') : recipients,
+      subject: subject,
+      body: emailBody || html_body || '', // Store whichever was provided
+      html_body: html_body || (emailBody ? emailBody.replace(/\n/g, '<br>') : ''),
+      sent_at: new Date().toISOString(),
+      type: 'outgoing',
+      is_read: true, // Sent emails are considered "read"
+    };
+
+    // Include reply headers in the stored email if present
+    if (in_reply_to) {
+      emailRecord.in_reply_to = in_reply_to;
+    }
+    if (references) {
+      emailRecord.references = references;
+    }
+
     const { data, error } = await supabase
       .from('emails')
-      .insert({
-        user_id: user.id,
-        from_email: profile.email,
-        to_email: Array.isArray(recipients) ? recipients.join(', ') : recipients,
-        subject: subject,
-        body: emailBody || html_body || '', // Store whichever was provided
-        html_body: html_body || (emailBody ? emailBody.replace(/\n/g, '<br>') : ''),
-        sent_at: new Date().toISOString(),
-        type: 'outgoing',
-        is_read: true, // Sent emails are considered "read"
-      })
+      .insert(emailRecord)
       .select()
       .single();
 

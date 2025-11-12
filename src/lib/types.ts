@@ -11,6 +11,8 @@ export interface Email {
   is_read: boolean;
   type: 'incoming' | 'outgoing';
   message_id?: string;
+  in_reply_to?: string;
+  references?: string;
   attachments?: Array<{
     filename: string;
     content_type: string;
@@ -28,4 +30,6 @@ export interface SendEmailRequest {
   body?: string; // Optional - required if html_body is not provided
   html_body?: string; // Optional - required if body is not provided
   from?: string; // Optional sender email
+  in_reply_to?: string; // Message-ID of the email being replied to
+  references?: string; // Space-separated list of message IDs in the thread
 }

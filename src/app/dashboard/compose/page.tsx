@@ -1,14 +1,16 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import { Send, AlertCircle, CheckCircle } from 'lucide-react';
 
 type MessageFormat = 'text' | 'html';
 
-export default function ComposePage() {
+function ComposeForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
   const [to, setTo] = useState('');
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
@@ -17,6 +19,34 @@ export default function ComposePage() {
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  
+  // Reply-related state
+  const [isReply, setIsReply] = useState(false);
+  const [inReplyTo, setInReplyTo] = useState<string | null>(null);
+  const [references, setReferences] = useState<string | null>(null);
+
+  // Initialize form with reply data if present
+  useEffect(() => {
+    const replyTo = searchParams.get('replyTo');
+    const toParam = searchParams.get('to');
+    const subjectParam = searchParams.get('subject');
+    const inReplyToParam = searchParams.get('inReplyTo');
+    const referencesParam = searchParams.get('references');
+    
+    if (replyTo) {
+      setIsReply(true);
+      if (toParam) setTo(toParam);
+      if (subjectParam) setSubject(subjectParam);
+      if (inReplyToParam) setInReplyTo(inReplyToParam);
+      if (referencesParam) {
+        // Append the message we're replying to to the references
+        setReferences(inReplyToParam ? `${referencesParam} ${inReplyToParam}` : referencesParam);
+      } else if (inReplyToParam) {
+        // If no existing references, start the thread with the message we're replying to
+        setReferences(inReplyToParam);
+      }
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +68,8 @@ export default function ComposePage() {
         subject: string;
         body?: string;
         html_body?: string;
+        in_reply_to?: string;
+        references?: string;
       } = {
         to,
         subject,
@@ -47,6 +79,14 @@ export default function ComposePage() {
         payload.html_body = htmlBody;
       } else {
         payload.body = body;
+      }
+
+      // Add reply headers if this is a reply
+      if (isReply && inReplyTo) {
+        payload.in_reply_to = inReplyTo;
+        if (references) {
+          payload.references = references;
+        }
       }
 
       const response = await fetch('/api/send', {
@@ -64,6 +104,9 @@ export default function ComposePage() {
         setSubject('');
         setBody('');
         setHtmlBody('');
+        setIsReply(false);
+        setInReplyTo(null);
+        setReferences(null);
         
         // Redirect to sent folder after a brief delay
         setTimeout(() => {
@@ -82,11 +125,19 @@ export default function ComposePage() {
 
   return (
     <div className="flex flex-col h-full">
-      <Header title="Compose Email" />
+      <Header title={isReply ? "Reply to Email" : "Compose Email"} />
       
       <div className="flex-1 overflow-auto p-8 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-3xl mx-auto">
           <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 space-y-6">
+            {isReply && (
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-4 py-3">
+                <p className="text-sm text-blue-700 dark:text-blue-300">
+                  This email will be sent as a reply
+                </p>
+              </div>
+            )}
+
             {/* To Field */}
             <div>
               <label htmlFor="to" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -218,5 +269,21 @@ export default function ComposePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Wrap in Suspense to handle useSearchParams
+export default function ComposePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col h-full">
+        <Header title="Compose Email" />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-gray-500 dark:text-gray-400">Loading...</div>
+        </div>
+      </div>
+    }>
+      <ComposeForm />
+    </Suspense>
   );
 }

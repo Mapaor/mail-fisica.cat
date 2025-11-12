@@ -2,7 +2,8 @@
 
 import { Email } from '@/lib/types';
 import { format } from 'date-fns';
-import { X, Paperclip } from 'lucide-react';
+import { X, Paperclip, Reply } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface EmailDetailProps {
   email: Email;
@@ -10,8 +11,22 @@ interface EmailDetailProps {
 }
 
 export default function EmailDetail({ email, onClose }: EmailDetailProps) {
+  const router = useRouter();
   const dateStr = email.received_at || email.sent_at || email.created_at;
   const hasAttachments = email.attachments && email.attachments.length > 0;
+
+  const handleReply = () => {
+    // Create query params for the compose page
+    const params = new URLSearchParams({
+      replyTo: email.id,
+      to: email.from_email,
+      subject: email.subject.startsWith('Re:') ? email.subject : `Re: ${email.subject}`,
+      ...(email.message_id && { inReplyTo: email.message_id }),
+      ...(email.references && { references: email.references }),
+    });
+    
+    router.push(`/dashboard/compose?${params.toString()}`);
+  };
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-800">
@@ -32,12 +47,23 @@ export default function EmailDetail({ email, onClose }: EmailDetailProps) {
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            {email.type === 'incoming' && (
+              <button
+                onClick={handleReply}
+                className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                title="Reply"
+              >
+                <Reply className="w-5 h-5" />
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {hasAttachments && (
