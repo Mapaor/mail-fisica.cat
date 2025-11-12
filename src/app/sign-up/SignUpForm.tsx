@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Lock, User, AlertCircle, CheckCircle, Forward } from 'lucide-react';
 
 const APEX_DOMAIN = process.env.NEXT_PUBLIC_APEX_DOMAIN || 'example.com';
+const PASSPHRASE_HINT = process.env.NEXT_PUBLIC_PASSHPRASE_HINT || 'Required to create an account';
 
 /**
  * Sign Up Form Component - Client Component
@@ -339,7 +340,7 @@ export default function SignUpForm() {
             />
           </div>
           <p className="text-xs text-gray-500 mt-1">
-            Required to create an account
+            Hint: {PASSPHRASE_HINT}
           </p>
         </div>
 
