@@ -13,7 +13,7 @@ interface EmailListProps {
 export default function EmailList({ emails, onEmailClick, selectedEmailId }: EmailListProps) {
   if (emails.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+      <div className="flex flex-col items-center justify-center h-64 text-gray-500 dark:text-gray-400">
         <Mail className="w-16 h-16 mb-4 opacity-50" />
         <p className="text-lg">No emails yet</p>
       </div>
@@ -21,7 +21,7 @@ export default function EmailList({ emails, onEmailClick, selectedEmailId }: Ema
   }
 
   return (
-    <div className="divide-y divide-gray-200">
+    <div className="divide-y divide-gray-200 dark:divide-gray-700">
       {emails.map((email) => {
         const isSelected = email.id === selectedEmailId;
         const dateStr = email.received_at || email.sent_at || email.created_at;
@@ -32,34 +32,34 @@ export default function EmailList({ emails, onEmailClick, selectedEmailId }: Ema
             onClick={() => onEmailClick(email)}
             className={`p-4 cursor-pointer transition-colors ${
               isSelected
-                ? 'bg-blue-50 border-l-4 border-blue-600'
-                : 'hover:bg-gray-50 border-l-4 border-transparent'
-            } ${!email.is_read ? 'bg-blue-50/30' : ''}`}
+                ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-600 dark:border-blue-400'
+                : 'hover:bg-gray-50 dark:hover:bg-gray-700 border-l-4 border-transparent'
+            } ${!email.is_read ? 'bg-blue-50/30 dark:bg-blue-900/10' : ''}`}
           >
             <div className="flex items-start gap-3">
               <div className="mt-1">
                 {email.is_read ? (
-                  <MailOpen className="w-5 h-5 text-gray-400" />
+                  <MailOpen className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                 ) : (
-                  <Mail className="w-5 h-5 text-blue-600" />
+                  <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 )}
               </div>
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2 mb-1">
-                  <p className={`text-sm truncate ${!email.is_read ? 'font-semibold' : 'font-medium'} text-gray-900`}>
+                  <p className={`text-sm truncate ${!email.is_read ? 'font-semibold' : 'font-medium'} text-gray-900 dark:text-white`}>
                     {email.type === 'incoming' ? email.from_email : `To: ${email.to_email}`}
                   </p>
-                  <span className="text-xs text-gray-500 whitespace-nowrap">
+                  <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
                     {formatDistanceToNow(new Date(dateStr), { addSuffix: true })}
                   </span>
                 </div>
                 
-                <p className={`text-sm truncate mb-1 ${!email.is_read ? 'font-semibold' : ''} text-gray-900`}>
+                <p className={`text-sm truncate mb-1 ${!email.is_read ? 'font-semibold' : ''} text-gray-900 dark:text-white`}>
                   {email.subject}
                 </p>
                 
-                <p className="text-sm text-gray-600 truncate">
+                <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
                   {email.body.substring(0, 100)}
                 </p>
               </div>

@@ -62,7 +62,7 @@ export default function InboxPage() {
       <div className="flex flex-col h-full">
         <Header title="Inbox" />
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-gray-500">Loading emails...</div>
+          <div className="text-gray-500 dark:text-gray-400">Loading emails...</div>
         </div>
       </div>
     );
@@ -78,7 +78,7 @@ export default function InboxPage() {
       
       <div className="flex-1 overflow-hidden flex">
         {/* Email List */}
-        <div className="w-96 border-r border-gray-200 bg-white overflow-y-auto">
+        <div className="w-96 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-y-auto">
           <EmailList 
             emails={emails}
             onEmailClick={handleEmailClick}
@@ -94,7 +94,7 @@ export default function InboxPage() {
               onClose={() => setSelectedEmail(null)}
             />
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-500">
+            <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
               <p>Select an email to view</p>
             </div>
           )}

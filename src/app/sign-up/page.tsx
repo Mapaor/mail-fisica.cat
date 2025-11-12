@@ -12,12 +12,12 @@ export default function SignUpPage() {
   const registrationEnabled = isAutoRegisterEnabled();
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 to-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         {/* Logo/Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">{APEX_DOMAIN}</h1>
-          <p className="text-gray-600">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">{APEX_DOMAIN}</h1>
+          <p className="text-gray-600 dark:text-gray-400">
             {registrationEnabled ? 'Create your email account' : 'Registration Status'}
           </p>
         </div>

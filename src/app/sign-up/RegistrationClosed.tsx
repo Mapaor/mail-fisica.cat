@@ -7,13 +7,13 @@ import { XCircle } from 'lucide-react';
  */
 export default function RegistrationClosed() {
   return (
-    <div className="bg-white rounded-xl shadow-lg p-8">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
       <div className="text-center space-y-4">
         <div className="flex justify-center">
-          <XCircle className="w-16 h-16 text-red-500" />
+          <XCircle className="w-16 h-16 text-red-500 dark:text-red-400" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">Registration Closed</h2>
-        <p className="text-gray-600">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Registration Closed</h2>
+        <p className="text-gray-600 dark:text-gray-400">
           New user registration is currently disabled. Please contact the administrator if you need
           an account.
         </p>

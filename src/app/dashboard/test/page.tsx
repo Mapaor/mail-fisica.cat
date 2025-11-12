@@ -37,19 +37,19 @@ export default function TestWebhookPage() {
     <div className="flex flex-col h-full">
       <Header title="Test Webhook" />
       
-      <div className="flex-1 overflow-auto p-8">
+      <div className="flex-1 overflow-auto p-8 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-3xl mx-auto">
           {/* Info Card */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-6">
             <div className="flex items-start gap-3">
-              <Info className="w-6 h-6 text-blue-600 mt-0.5 shrink-0" />
+              <Info className="w-6 h-6 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
               <div>
-                <h3 className="font-semibold text-blue-900 mb-2">Webhook Testing Tool</h3>
-                <p className="text-sm text-blue-800 mb-3">
+                <h3 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">Webhook Testing Tool</h3>
+                <p className="text-sm text-blue-800 dark:text-blue-400 mb-3">
                   This tool simulates ForwardEmail sending an email to your webhook endpoint.
                   Use it to verify your webhook is working correctly before configuring ForwardEmail.
                 </p>
-                <div className="bg-blue-100 rounded p-3 text-sm text-blue-900">
+                <div className="bg-blue-100 dark:bg-blue-950/50 rounded p-3 text-sm text-blue-900 dark:text-blue-300">
                   <p className="font-medium mb-1">What this does:</p>
                   <ol className="list-decimal list-inside space-y-1 ml-2">
                     <li>Sends a POST request to your webhook</li>
@@ -62,8 +62,8 @@ export default function TestWebhookPage() {
           </div>
 
           {/* Test Button */}
-          <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8 text-center">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
               Send Test Email to Webhook
             </h3>
             
@@ -80,8 +80,8 @@ export default function TestWebhookPage() {
             {result && (
               <div className={`mt-6 p-4 rounded-lg border ${
                 result.success 
-                  ? 'bg-green-50 border-green-200 text-green-800' 
-                  : 'bg-red-50 border-red-200 text-red-800'
+                  ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-800 dark:text-green-400' 
+                  : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-800 dark:text-red-400'
               }`}>
                 <div className="flex items-start gap-3">
                   {result.success ? (
@@ -95,12 +95,12 @@ export default function TestWebhookPage() {
                     </p>
                     <p className="text-sm mb-2">{result.message}</p>
                     {result.email_id && (
-                      <p className="text-xs font-mono bg-white bg-opacity-50 p-2 rounded">
+                      <p className="text-xs font-mono bg-white dark:bg-gray-800 bg-opacity-50 p-2 rounded">
                         Email ID: {result.email_id}
                       </p>
                     )}
                     {result.success && (
-                      <div className="mt-3 pt-3 border-t border-green-200">
+                      <div className="mt-3 pt-3 border-t border-green-200 dark:border-green-800">
                         <p className="text-sm font-medium mb-2">Next steps:</p>
                         <ol className="text-sm space-y-1 list-decimal list-inside">
                           <li>Go to <a href="/dashboard/inbox" className="underline font-medium">Inbox</a> to see the test email</li>
@@ -116,30 +116,30 @@ export default function TestWebhookPage() {
           </div>
 
           {/* Troubleshooting */}
-          <div className="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-6">
-            <h4 className="font-semibold text-gray-900 mb-3">Troubleshooting</h4>
+          <div className="mt-6 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+            <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Troubleshooting</h4>
             
-            <div className="space-y-3 text-sm text-gray-700">
+            <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
               <div>
-                <p className="font-medium text-gray-900">✅ Test email appears in inbox:</p>
+                <p className="font-medium text-gray-900 dark:text-white">✅ Test email appears in inbox:</p>
                 <p>Your webhook is working! Configure ForwardEmail to send POST requests to:</p>
-                <code className="block bg-gray-100 text-gray-900 px-3 py-2 rounded mt-1 text-xs">
+                <code className="block bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-300 px-3 py-2 rounded mt-1 text-xs">
                   {SITE_URL}/api/webhooks/incomingMail
                 </code>
               </div>
 
               <div>
-                <p className="font-medium text-gray-900">❌ Test email does NOT appear:</p>
+                <p className="font-medium text-gray-900 dark:text-white">❌ Test email does NOT appear:</p>
                 <ul className="list-disc list-inside ml-2 mt-1 space-y-1">
                   <li>Check Vercel logs for errors</li>
                   <li>Verify Supabase credentials in Vercel environment variables</li>
-                  <li>Make sure the <code className="bg-gray-100 px-1 rounded">emails</code> table exists in Supabase</li>
-                  <li>Run the SQL schema from <code className="bg-gray-100 px-1 rounded">database-setup.sql</code></li>
+                  <li>Make sure the <code className="bg-gray-100 dark:bg-gray-900 px-1 rounded">emails</code> table exists in Supabase</li>
+                  <li>Run the SQL schema from <code className="bg-gray-100 dark:bg-gray-900 px-1 rounded">database-setup.sql</code></li>
                 </ul>
               </div>
 
               <div>
-                <p className="font-medium text-gray-900">📊 Current Vercel logs show GET requests only:</p>
+                <p className="font-medium text-gray-900 dark:text-white">📊 Current Vercel logs show GET requests only:</p>
                 <p>This is normal! GET requests are from the Monitor page. ForwardEmail needs to send POST requests for actual emails.</p>
               </div>
             </div>

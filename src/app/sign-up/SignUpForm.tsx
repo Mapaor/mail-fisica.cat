@@ -234,15 +234,15 @@ export default function SignUpForm() {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-8">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
       <form onSubmit={handleSignUp} className="space-y-6">
         {/* Alias Field */}
         <div>
-          <label htmlFor="alias" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="alias" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Choose your alias *
           </label>
           <div className="relative">
-            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
             <input
               id="alias"
               type="text"
@@ -250,7 +250,7 @@ export default function SignUpForm() {
               onChange={(e) => handleAliasChange(e.target.value)}
               placeholder="alias"
               required
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
               disabled={loading}
             />
             {checkingAlias && (
@@ -259,27 +259,27 @@ export default function SignUpForm() {
               </div>
             )}
             {!checkingAlias && aliasAvailable === true && (
-              <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-600" />
+              <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-600 dark:text-green-500" />
             )}
             {!checkingAlias && aliasAvailable === false && (
-              <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-600" />
+              <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-600 dark:text-red-500" />
             )}
           </div>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Your email will be: <strong>{alias || 'alias'}@{APEX_DOMAIN}</strong>
           </p>
           {aliasAvailable === false && (
-            <p className="text-sm text-red-600 mt-1">This alias is already taken</p>
+            <p className="text-sm text-red-600 dark:text-red-400 mt-1">This alias is already taken</p>
           )}
         </div>
 
         {/* Password Field */}
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Password *
           </label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
             <input
               id="password"
               type="password"
@@ -287,20 +287,20 @@ export default function SignUpForm() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
               disabled={loading}
             />
           </div>
-          <p className="text-xs text-gray-500 mt-1">Minimum 8 characters</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Minimum 8 characters</p>
         </div>
 
         {/* Confirm Password Field */}
         <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Confirm Password *
           </label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
             <input
               id="confirmPassword"
               type="password"
@@ -308,7 +308,7 @@ export default function SignUpForm() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="••••••••"
               required
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
               disabled={loading}
             />
           </div>
@@ -316,33 +316,33 @@ export default function SignUpForm() {
 
         {/* Forward To Field (Optional) */}
         <div>
-          <label htmlFor="forwardTo" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="forwardTo" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Forward to (optional)
           </label>
           <div className="relative">
-            <Forward className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Forward className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
             <input
               id="forwardTo"
               type="email"
               value={forwardTo}
               onChange={(e) => setForwardTo(e.target.value)}
               placeholder="your.email@gmail.com"
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
               disabled={loading}
             />
           </div>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             Automatically forward incoming emails to another address
           </p>
         </div>
 
         {/* Organization Passphrase Field */}
         <div>
-          <label htmlFor="orgPassphrase" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="orgPassphrase" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Organization Passphrase *
           </label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
             <input
               id="orgPassphrase"
               type="password"
@@ -350,18 +350,18 @@ export default function SignUpForm() {
               onChange={(e) => setOrgPassphrase(e.target.value)}
               placeholder="Enter organization passphrase"
               required
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
               disabled={loading}
             />
           </div>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             Hint: {PASSPHRASE_HINT}
           </p>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+          <div className="flex items-center gap-2 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400">
             <AlertCircle className="w-5 h-5 shrink-0" />
             <p className="text-sm">{error}</p>
           </div>
@@ -369,7 +369,7 @@ export default function SignUpForm() {
 
         {/* DNS Warning Message */}
         {dnsWarning && (
-          <div className="flex items-center gap-2 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700">
+          <div className="flex items-center gap-2 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-yellow-700 dark:text-yellow-400">
             <AlertCircle className="w-5 h-5 shrink-0" />
             <p className="text-sm">{dnsWarning}</p>
           </div>
@@ -387,9 +387,9 @@ export default function SignUpForm() {
 
       {/* Sign In Link */}
       <div className="mt-6 text-center">
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-400">
           Already have an account?{' '}
-          <Link href="/sign-in" className="text-blue-600 font-medium hover:text-blue-700">
+          <Link href="/sign-in" className="text-blue-600 dark:text-blue-400 font-medium hover:text-blue-700 dark:hover:text-blue-300">
             Sign in
           </Link>
         </p>
