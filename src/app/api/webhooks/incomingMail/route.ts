@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { createClient as createServerClient } from '@/lib/supabase/server';
 
 const APEX_DOMAIN = process.env.APEX_DOMAIN || 'example.com';
 
@@ -20,10 +21,37 @@ const getSupabaseServiceClient = () => {
   });
 };
 
-// GET endpoint to monitor recent webhook deliveries
+// GET endpoint to monitor recent webhook deliveries (admin only)
 export async function GET(request: NextRequest) {
   console.log('GET request to webhook endpoint');
   try {
+    // Authenticate user for GET requests
+    const supabaseAuth = await createServerClient();
+    
+    // Get authenticated user
+    const {
+      data: { user },
+    } = await supabaseAuth.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check if user is admin
+    const { data: profile, error: profileError } = await supabaseAuth
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError || !profile || profile.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Forbidden: Admin access required' },
+        { status: 403 }
+      );
+    }
+
+    // Use service client to fetch data
     const supabase = getSupabaseServiceClient();
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '10');
