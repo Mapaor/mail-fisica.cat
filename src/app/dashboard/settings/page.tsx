@@ -229,7 +229,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Danger Zone */}
-      <div className="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow p-6 border-2 border-red-200 dark:border-red-800">
+      <div className="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow p-6 border-1 border-red-600 dark:border-red-800">
         <h2 className="text-xl font-semibold text-red-600 dark:text-red-500 mb-4">Danger Zone</h2>
         <p className="text-gray-600 dark:text-gray-400 mb-4">
           Permanently delete your account and all associated data. This action cannot be undone.
@@ -239,13 +239,13 @@ export default function SettingsPage() {
           <button
             onClick={() => setShowDeleteConfirm(true)}
             disabled={deleting}
-            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 bg-red-600 dark:bg-red-800 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Delete Account
           </button>
         ) : (
           <div className="space-y-4">
-            <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-800 rounded-lg">
               <p className="text-sm text-red-800 dark:text-red-400 font-semibold mb-2">
                 ⚠️ Are you absolutely sure?
               </p>
@@ -258,7 +258,7 @@ export default function SettingsPage() {
               <button
                 onClick={handleDeleteAccount}
                 disabled={deleting}
-                className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+                className="px-6 py-2 bg-red-600 dark:bg-red-800 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
               >
                 {deleting ? 'Deleting...' : 'Yes, Delete My Account'}
               </button>
