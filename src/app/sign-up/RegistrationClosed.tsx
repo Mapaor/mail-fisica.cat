@@ -7,7 +7,7 @@ import { XCircle } from 'lucide-react';
  */
 export default function RegistrationClosed() {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8">
       <div className="text-center space-y-4">
         <div className="flex justify-center">
           <XCircle className="w-16 h-16 text-red-500 dark:text-red-400" />

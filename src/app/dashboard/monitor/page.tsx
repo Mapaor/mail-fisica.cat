@@ -68,7 +68,7 @@ export default function WebhookMonitorPage() {
         isRefreshing={isRefreshing}
       />
       
-      <div className="flex-1 overflow-auto p-8 bg-gray-50 dark:bg-gray-900">
+      <div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-5xl mx-auto">
           {/* Info Card */}
           <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">

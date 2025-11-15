@@ -234,8 +234,8 @@ export default function SignUpForm() {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-      <form onSubmit={handleSignUp} className="space-y-6">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8">
+      <form onSubmit={handleSignUp} className="space-y-5 sm:space-y-6">
         {/* Alias Field */}
         <div>
           <label htmlFor="alias" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

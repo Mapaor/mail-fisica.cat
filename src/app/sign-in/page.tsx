@@ -50,8 +50,8 @@ export default function SignInPage() {
         </div>
 
         {/* Sign In Form */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-          <form onSubmit={handleSignIn} className="space-y-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8">
+          <form onSubmit={handleSignIn} className="space-y-5 sm:space-y-6">
             {/* Email Field */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

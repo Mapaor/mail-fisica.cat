@@ -135,7 +135,7 @@ export default function SettingsPage() {
     <div className="flex flex-col h-full">
       <Header title="Settings" />
       
-      <div className="flex-1 overflow-auto p-8 bg-gray-50 dark:bg-gray-900">
+      <div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-2xl mx-auto">
           {/* Profile Info */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
@@ -186,7 +186,7 @@ export default function SettingsPage() {
             </div>
           )}
 
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <button
               type="submit"
               disabled={saving}
@@ -254,7 +254,7 @@ export default function SettingsPage() {
                 all your emails, and remove your DNS records. This action cannot be undone.
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={handleDeleteAccount}
                 disabled={deleting}

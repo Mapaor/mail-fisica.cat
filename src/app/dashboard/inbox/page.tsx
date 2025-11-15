@@ -11,6 +11,7 @@ export default function InboxPage() {
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showEmailList, setShowEmailList] = useState(true);
 
   const fetchEmails = async (showRefreshing = false) => {
     if (showRefreshing) setIsRefreshing(true);
@@ -37,6 +38,7 @@ export default function InboxPage() {
 
   const handleEmailClick = async (email: Email) => {
     setSelectedEmail(email);
+    setShowEmailList(false); // Hide list on mobile when email is selected
 
     // Mark as read if it's unread
     if (!email.is_read) {
@@ -55,6 +57,11 @@ export default function InboxPage() {
         console.error('Error marking email as read:', error);
       }
     }
+  };
+
+  const handleCloseEmail = () => {
+    setSelectedEmail(null);
+    setShowEmailList(true); // Show list when closing email on mobile
   };
 
   if (isLoading) {
@@ -78,7 +85,9 @@ export default function InboxPage() {
       
       <div className="flex-1 overflow-hidden flex">
         {/* Email List */}
-        <div className="w-96 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-y-auto">
+        <div className={`w-full lg:w-96 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-y-auto ${
+          showEmailList ? 'block' : 'hidden lg:block'
+        }`}>
           <EmailList 
             emails={emails}
             onEmailClick={handleEmailClick}
@@ -86,11 +95,13 @@ export default function InboxPage() {
           />
         </div>
         {/* Email Detail */}
-        <div className="flex-1 overflow-hidden">
+        <div className={`flex-1 overflow-hidden ${
+          showEmailList ? 'hidden lg:block' : 'block'
+        }`}>
           {selectedEmail ? (
             <EmailDetail 
               email={selectedEmail}
-              onClose={() => setSelectedEmail(null)}
+              onClose={handleCloseEmail}
             />
           ) : (
             <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
